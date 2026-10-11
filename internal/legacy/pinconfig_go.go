@@ -1,12 +1,11 @@
-//go:build !tinygo
+//go:build !baremetal
 
 package legacy
 
 import "tinygo.org/x/drivers/internal/pin"
 
-// This file compiles for non-tinygo builds
-// for use with "big" or "upstream" Go where
-// there is no machine package.
+// This file compiles for "big" Go and for TinyGo targets without
+// hardware pins, such as wasm.
 
 func configurePinOut(p pin.Output)          {}
 func configurePinInput(p pin.Input)         {}
