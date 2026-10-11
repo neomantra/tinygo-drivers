@@ -27,3 +27,11 @@ jobs:
         run: |
           go env -w GOFLAGS=-buildvcs=false
           make smoke-test
+      - name: Compile unit tests for js/wasm
+        run: make unit-test-js-build
+      - name: Install wasmtime
+        uses: bytecodealliance/actions/wasmtime/setup@v1
+        with:
+          version: "29.0.1"
+      - name: Run unit tests under wasm
+        run: make unit-test-wasm

@@ -25,7 +25,22 @@ TESTS = $(filter-out $(addsuffix /%,$(EXCLUDE_TESTS)),$(HAS_TESTS))
 unit-test:
 	@go test -v $(addprefix ./,$(TESTS))
 
-test: clean fmt-check unit-test smoke-test
+# dht needs machine.CPUFrequency, which the wasm machine package does not have.
+JS_BUILD_EXCLUDE_TESTS = dht
+JS_BUILD_TESTS = $(filter-out $(addsuffix /%,$(JS_BUILD_EXCLUDE_TESTS)),$(TESTS))
+
+# tinygo test -c writes one <pkg>.test file per package into the current directory.
+unit-test-js-build:
+	@tinygo test -c -target=wasm $(addprefix ./,$(JS_BUILD_TESTS)); status=$$?; rm -f *.test; exit $$status
+
+# quicktest needs reflect.Type.IsVariadic, which TinyGo does not implement.
+WASM_EXCLUDE_TESTS = adt7410 aht20 gps ina219 ina260 lis2mdl mcp23017 scd4x seesaw sharpmem tester $(JS_BUILD_EXCLUDE_TESTS)
+WASM_TESTS = $(filter-out $(addsuffix /%,$(WASM_EXCLUDE_TESTS)),$(TESTS))
+
+unit-test-wasm:
+	@tinygo test -target=wasip1 $(addprefix ./,$(WASM_TESTS))
+
+test: clean fmt-check unit-test unit-test-wasm unit-test-js-build smoke-test
 
 EXCLUDE_DIRS = build cmd examples internal lora ndir netdev netlink tester
 

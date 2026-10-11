@@ -41,3 +41,6 @@ To run the tests:
 ```
 make test
 ```
+
+The `unit-test-wasm` target runs the unit tests with TinyGo on the `wasip1` target. It needs [wasmtime](https://wasmtime.dev) on your `PATH`.
+The `unit-test-js-build` target compiles the unit tests for the TinyGo `wasm` target, which is GOOS `js`, but does not run them.
